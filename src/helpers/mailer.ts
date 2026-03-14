@@ -49,10 +49,11 @@ export const sendEmail = async (
         emailType === "VERIFY" ? "Verify your email" : "Reset your password",
       html: `<p>Click <a href="${
         process.env.DOMAIN
-      }/verifyemail?token=${hashedToken}">here</a> to ${
+      }/${emailType === "VERIFY" ? "verifyemail" : "resetpassword"}?token=${hashedToken}">here</a> to ${
         emailType === "VERIFY" ? "verify your email" : "reset your password"
       }</p>`,
     };
+    // so the path should be something like /verifyemail?token=${hashedToken}
 
     // send the email
     const mailresponse = await transport.sendMail(mailOptions);

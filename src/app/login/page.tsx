@@ -26,12 +26,10 @@ export default function LoginPage() {
   const onLogin = async () => {
     try {
       setLoading(true);
-      const response = await axios.post("/api/users/login", user);
+      const response = await axios.post("/api/users/login", user); // the WHOLE user body becomes the request body.
       console.log("Login success", response.data);
       toast.success(response.data.message);
-      setTimeout(() => {
-        router.push("/profile");
-      }, 1500);
+      router.push("/profile"); // actually don't need the setTimeout here anymore to wait like 1s to redirect user, i can see the toast (small notification at the top) even when the user is redirected instantly.
     } catch (error: any) {
       console.log("Login failed", error.message);
       toast.error(error.message);
@@ -69,6 +67,7 @@ export default function LoginPage() {
       >
         Login here
       </button>
+      <Link href="/forgotpassword">Forgot password</Link>
       <Link href="/signup">Visit sign up page</Link>
     </div>
   );
