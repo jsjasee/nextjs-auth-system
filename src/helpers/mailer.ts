@@ -35,7 +35,7 @@ export const sendEmail = async (
     // create a transport
     const transport = nodemailer.createTransport({
       host: process.env.MAILTRAP_HOST,
-      port: process.env.MAILTRAP_PORT || 2525,
+      port: Number(process.env.MAIL_PORT),
       auth: {
         user: process.env.MAILTRAP_USER, // do i need to set up my process.env using dotenv like in express for nextjs?
         pass: process.env.MAILTRAP_PASS,
