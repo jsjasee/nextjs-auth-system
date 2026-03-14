@@ -2,6 +2,7 @@ import { connect } from "@/src/dbConfig/dbConfig"; // @ is the project's root di
 import User from "@/src/models/userModel";
 import { NextRequest, NextResponse } from "next/server";
 import bcryptjs from "bcryptjs";
+import { sendEmail } from "@/src/helpers/mailer";
 
 connect();
 
@@ -37,6 +38,9 @@ export async function POST(request: NextRequest) {
     const savedUser = await newUser.save();
     console.log(savedUser);
 
+    // send the email for user verification
+    await sendEmail(email, "VERIFY", savedUser._id);
+
     return NextResponse.json(
       {
         message: "User created successfully",
@@ -44,7 +48,7 @@ export async function POST(request: NextRequest) {
         savedUser,
       },
       { status: 201 },
-    ); // what do i need to have in next reponse? need status?
+    ); // what do i need to have in next reponse? need status? - just need the json AND the status, whatever you put the in the json aka the first params is not important.
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

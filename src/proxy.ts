@@ -7,7 +7,8 @@ import type { NextRequest } from "next/server";
 export function proxy(request: NextRequest) {
   const path = request.nextUrl.pathname; // this is how you can get the path
 
-  const isPublicPath = path === "/login" || path === "/signup";
+  const isPublicPath =
+    path === "/login" || path === "/signup" || path === "/verifyemail";
 
   // this token might or might not there, hence we use the ?
   const token = request.cookies.get("token")?.value || "";
@@ -21,6 +22,6 @@ export function proxy(request: NextRequest) {
 
 // this is the matching part (which route to run middleware)
 export const config = {
-  matcher: ["/", "/profile/:path*", "/login", "/signup"],
+  matcher: ["/", "/profile/:path*", "/login", "/signup", "/verifyemail"],
   // /:path* means /profile and /profile/123 are covered
 };
