@@ -34,8 +34,8 @@ export const sendEmail = async (
 
     // create a transport
     const transport = nodemailer.createTransport({
-      host: "sandbox.smtp.mailtrap.io",
-      port: 2525,
+      host: process.env.MAILTRAP_HOST,
+      port: process.env.MAILTRAP_PORT || 2525,
       auth: {
         user: process.env.MAILTRAP_USER, // do i need to set up my process.env using dotenv like in express for nextjs?
         pass: process.env.MAILTRAP_PASS,
@@ -43,7 +43,7 @@ export const sendEmail = async (
     });
 
     const mailOptions = {
-      from: "examplemail@example.com",
+      from: process.env.MAILTRAP_FROM,
       to: email,
       subject:
         emailType === "VERIFY" ? "Verify your email" : "Reset your password",
