@@ -8,6 +8,7 @@
 import nodemailer from "nodemailer";
 import User from "@/src/models/userModel";
 import bcryptjs from "bcryptjs";
+import crypto from "node:crypto"; // this crypto module is from nodeJS
 
 export const sendEmail = async (
   email: string,
@@ -16,7 +17,12 @@ export const sendEmail = async (
 ) => {
   try {
     // create a hashed token
-    const hashedToken = await bcryptjs.hash(userId.toString(), 10); // generate some random string so that we can match it later? is there a flow chart or framework etc...?? why do we need this??
+    // const hashedToken = await bcryptjs.hash(userId.toString(), 10); // generate some random string so that we can match it later? is there a flow chart or framework etc...?? why do we need this??
+    const rawToken = crypto.randomBytes(32).toString("hex"); // generate the raw token, this we will attach it in the url
+    const hashedToken = crypto
+      .createHash("sha256") // specify you want to use the sha256 algorithm
+      .update(rawToken)
+      .digest("hex");
 
     // usually we put the "VERIFY" and "RESET" in an enum and check against that enum.
     if (emailType === "VERIFY") {
@@ -49,7 +55,7 @@ export const sendEmail = async (
         emailType === "VERIFY" ? "Verify your email" : "Reset your password",
       html: `<p>Click <a href="${
         process.env.DOMAIN
-      }/${emailType === "VERIFY" ? "verifyemail" : "resetpassword"}?token=${hashedToken}">here</a> to ${
+      }/${emailType === "VERIFY" ? "verifyemail" : "resetpassword"}?token=${rawToken}">here</a> to ${
         emailType === "VERIFY" ? "verify your email" : "reset your password"
       }</p>`,
     };

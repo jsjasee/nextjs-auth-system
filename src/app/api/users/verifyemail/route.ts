@@ -1,6 +1,7 @@
 import { connect } from "@/src/dbConfig/dbConfig";
 import User from "@/src/models/userModel";
 import { NextRequest, NextResponse } from "next/server";
+import crypto from "node:crypto";
 
 connect();
 
@@ -10,9 +11,12 @@ export async function POST(request: NextRequest) {
     const { token } = reqBody; // we are assuming the frontend will make a request to the backend with the token in the request body, or another method is that the token could have been in the url params??
     console.log(token);
 
+    // we need to hash the token again, since the token we received is the RAW token (see mailer.ts)
+    const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+
     // find the user based on the verify token AND when the verify token expiry where the expiry date is GREATER THAN now.
     const user = await User.findOne({
-      verifyToken: token,
+      verifyToken: hashedToken,
       verifyTokenExpiry: { $gt: Date.now() },
     });
 
