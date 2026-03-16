@@ -18,11 +18,18 @@ export async function POST(request: NextRequest) {
     // do some validation here - check if user already exists
     const user = await User.findOne({ email });
 
-    if (user) {
+    if (user && user.isVerified) {
       return NextResponse.json(
         { error: "User already exists" },
         { status: 400 },
       );
+    }
+
+    // resend the user the verification email IF the token expires and they try to sign up with the same email again.
+    if (user && !user.isVerified) {
+      // Resend verification email with fresh token
+      await sendEmail(email, "VERIFY", user._id);
+      return NextResponse.json({ message: "Verification email resent" });
     }
 
     // hash password
